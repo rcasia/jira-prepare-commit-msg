@@ -1,8 +1,10 @@
 mod extract_ticket_from_branch;
+mod read_file;
 
 use std::env;
-use std::fs;
 use std::print;
+
+use read_file::read_file;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -28,12 +30,6 @@ fn main() {
 
 }
 
-fn read_file(filename: &str) -> String {
-    let contents = fs::read_to_string(filename)
-        .expect("Something went wrong reading the file");
-
-    contents
-}
 
 
 #[cfg(test)]
