@@ -23,16 +23,24 @@ fn main() {
         }
     }
     
+    let branch_name = get_branch_name();
     let commit_filename = args.get(1).expect("No commit filename given");
     let commit_message = read_file(commit_filename);
 
     print!("Commit message: {}", commit_message);
+    print!("Branch name: {}", branch_name);
 
 }
 
+fn get_branch_name() -> String {
+    let branch_name : String = std::process::Command::new("git")
+        .args(&["branch", "--show-current"])
+        .output()
+        .expect("Failed to execute command")
+        .stdout
+        .iter()
+        .map(|&c| c as char)
+        .collect();
 
-
-#[cfg(test)]
-mod tests {
-
+    branch_name
 }
