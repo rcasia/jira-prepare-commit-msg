@@ -1,12 +1,14 @@
 mod extract_ticket_from_branch;
 mod read_file;
 mod branch_name;
+mod write_file;
 
 use std::env;
 
 use read_file::read_file;
 use branch_name::get_branch_name;
 use extract_ticket_from_branch::extract_ticket_from_branch_name;
+use write_file::write_to_file;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -37,10 +39,3 @@ fn main() {
 
 }
 
-fn write_to_file(filename: &str, content: &str) -> () {
-    use std::fs::File;
-    use std::io::Write;
-
-    let mut file = File::create(filename).expect("Unable to create file");
-    file.write_all(content.as_bytes()).expect("Unable to write data");
-}
