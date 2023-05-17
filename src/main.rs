@@ -4,6 +4,12 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+    
+    // expect arguments to have at least size 2
+    if args.len() < 2 {
+        println!("Not enough arguments");
+        return;
+    }
 
     // only accept 'message' or nothing as argument[2]
     if let Some(commit_source) = args.get(2) {
