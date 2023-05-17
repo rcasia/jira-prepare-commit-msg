@@ -3,7 +3,6 @@ mod read_file;
 mod branch_name;
 
 use std::env;
-use std::print;
 
 use read_file::read_file;
 use branch_name::get_branch_name;
@@ -29,11 +28,19 @@ fn main() {
     let branch_name = get_branch_name();
     let commit_filename = args.get(1).expect("No commit filename given");
     let commit_message = read_file(commit_filename);
-    let ticket_number = extract_ticket_from_branch::extract_ticket_from_branch_name(&branch_name);
+    let ticket_number = extract_ticket_from_branch_name(&branch_name);
+    let jira_commit_message = format!("[{}] {}", ticket_number, commit_message);
 
-    print!("Commit message: {}", commit_message);
-    print!("Branch name: {}", branch_name);
-    print!("Ticket number: {}", ticket_number);
+    write_to_file(&commit_filename, &jira_commit_message);
+
+    println!("[{}] {}", ticket_number, commit_message);
 
 }
 
+fn write_to_file(filename: &str, content: &str) -> () {
+    use std::fs::File;
+    use std::io::Write;
+
+    let mut file = File::create(filename).expect("Unable to create file");
+    file.write_all(content.as_bytes()).expect("Unable to write data");
+}
