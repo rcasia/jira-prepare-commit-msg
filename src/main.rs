@@ -7,6 +7,7 @@ use std::print;
 
 use read_file::read_file;
 use branch_name::get_branch_name;
+use extract_ticket_from_branch::extract_ticket_from_branch_name;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -28,9 +29,11 @@ fn main() {
     let branch_name = get_branch_name();
     let commit_filename = args.get(1).expect("No commit filename given");
     let commit_message = read_file(commit_filename);
+    let ticket_number = extract_ticket_from_branch::extract_ticket_from_branch_name(&branch_name);
 
     print!("Commit message: {}", commit_message);
     print!("Branch name: {}", branch_name);
+    print!("Ticket number: {}", ticket_number);
 
 }
 
