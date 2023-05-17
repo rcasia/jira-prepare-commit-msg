@@ -1,6 +1,8 @@
 mod extract_ticket_from_branch;
 
 use std::env;
+use std::fs;
+use std::print;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -19,9 +21,18 @@ fn main() {
         }
     }
     
-    for idx in 0..args.len() {
-        println!("arg[{}]: {}", idx, args[idx]);
-    }
+    let commit_filename = args.get(1).expect("No commit filename given");
+    let commit_message = read_file(commit_filename);
+
+    print!("Commit message: {}", commit_message);
+
+}
+
+fn read_file(filename: &str) -> String {
+    let contents = fs::read_to_string(filename)
+        .expect("Something went wrong reading the file");
+
+    contents
 }
 
 
