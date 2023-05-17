@@ -1,10 +1,12 @@
 mod extract_ticket_from_branch;
 mod read_file;
+mod branch_name;
 
 use std::env;
 use std::print;
 
 use read_file::read_file;
+use branch_name::get_branch_name;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -32,15 +34,3 @@ fn main() {
 
 }
 
-fn get_branch_name() -> String {
-    let branch_name : String = std::process::Command::new("git")
-        .args(&["branch", "--show-current"])
-        .output()
-        .expect("Failed to execute command")
-        .stdout
-        .iter()
-        .map(|&c| c as char)
-        .collect();
-
-    branch_name
-}
