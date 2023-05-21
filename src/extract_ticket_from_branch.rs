@@ -1,16 +1,20 @@
 use regex::Regex;
 
-pub fn extract_ticket_from_branch_name(branch_name: &str) -> &str {
+pub fn extract_ticket_from_branch_name(branch_name: &str) -> Result<&str, ()> {
 
     let re = Regex::new(r"[a-z]*/?([A-Z]+-\d+)(?:-.*)?").unwrap();
 
-    let ticket = re.captures(branch_name)
-        .expect(format!("No jira ticket found for {}", branch_name).as_str())
-        .get(1)
-        .unwrap()
-        .as_str();
 
-    return ticket
+    match re.captures(branch_name) {
+        Some(caps) => {
+            Ok(caps.get(1).unwrap().as_str())
+        },
+        None => {
+            println!("No ticket found in branch name: {}", branch_name);
+            Err(())
+        }
+    }
+
 }
 
 #[cfg(test)]
@@ -34,24 +38,26 @@ mod tests {
         
         for branch_name in branch_names {
             // when
-            let actual = extract_ticket_from_branch_name(branch_name);
+            let result = extract_ticket_from_branch_name(branch_name);
 
             // then
+            assert!(result.is_ok());
+            let actual = result.unwrap();
             assert_eq!(actual, "TEST-1234");
         }
     }
 
     #[test]
-    fn test_panics_when_no_ticket_found() {
+    fn test_should_not_panic_when_no_ticket_found() {
         // given
-        let branch_name = "feature/TEST-foo";
+        let branch_name = "chill-branch-name";
 
         // when
-        let actual = std::panic::catch_unwind(|| extract_ticket_from_branch_name(branch_name));
+        // let actual = std::panic::catch_unwind(|| extract_ticket_from_branch_name(branch_name));
+        let result = extract_ticket_from_branch_name(branch_name);
 
         // then
-        assert!(actual.is_err());
-        assert!(actual.unwrap_err().downcast_ref::<String>().unwrap().contains("No jira ticket found for"));
+        assert!(result.is_err());
     }
 
 }
