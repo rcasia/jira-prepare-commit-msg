@@ -30,12 +30,22 @@ fn main() {
     let branch_name = get_branch_name();
     let commit_filename = args.get(1).expect("No commit filename given");
     let commit_message = read_file(commit_filename);
-    let ticket_number = extract_ticket_from_branch_name(&branch_name);
-    let jira_commit_message = format!("[{}] {}", ticket_number, commit_message);
+    // let ticket_number = extract_ticket_from_branch_name(&branch_name);
+    //
+
+    let jira_commit_message = match extract_ticket_from_branch_name(&branch_name) {
+        Ok(ticket_number) => {
+            format!("[{}] {}", ticket_number, commit_message)
+        },
+        Err(_) => {
+            println!("No ticket found in branch name: {}", branch_name);
+            commit_message
+        }
+    };
 
     write_to_file(&commit_filename, &jira_commit_message);
 
-    println!("[{}] {}", ticket_number, commit_message);
+    println!("Commit message: {}", jira_commit_message);
 
 }
 
