@@ -2,6 +2,9 @@
 
 # This script is used to test the functionality of the program
 
+# Set up the environment
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
 
 # Function to print error message and exit
 test_failure() {
