@@ -1,0 +1,63 @@
+#!/bin/bash -x
+
+# This script is used to test the functionality of the program
+#
+
+echo $HOME
+
+# Set up the environment
+git config --global init.defaultBranch main
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+cargo install --path .
+mv target/release/jira-prepare-commit-msg .git/hooks/prepare-commit-msg
+ls -la .git/hooks
+
+# Function to print error message and exit
+test_failure() {
+    # echo in red
+    echo "\e[31mTest failed: $1\e[0m"
+    exit 1
+}
+
+test_success() {
+    # echo in green
+    echo "\e[32mAll tests passed\e[0m"
+    exit 0
+}
+
+# Create a sample repository
+rm -rf sample-repository
+mkdir sample-repository
+cd sample-repository
+
+# Initialize the repository
+git init
+
+# Ensure that the hooks are enabled
+git config core.hooksPath .git/hooks
+git config --list
+
+# Create a file
+touch test.txt
+
+# Add the file to the repository
+git add test.txt
+
+# Commit the file
+git commit -m "Initial commit"
+
+# Create a branch and checkout to it
+git checkout -b feature/JIRA-1234
+
+# Write to the file
+echo "This is a test" >> test.txt
+
+# Commit the file
+git commit -am "Add test text"
+
+# Test that commit message is correct
+git log -1 --oneline | grep -q "\[JIRA-1234\]" || test_failure "Commit message is incorrect"
+
+test_success
