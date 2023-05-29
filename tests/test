@@ -1,10 +1,18 @@
 #!/bin/bash -x
 
 # This script is used to test the functionality of the program
+#
+
+echo $HOME
 
 # Set up the environment
+git config --global init.defaultBranch main
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
+
+cargo install --path .
+mv target/release/jira-prepare-commit-msg .git/hooks/prepare-commit-msg
+ls -la .git/hooks
 
 # Function to print error message and exit
 test_failure() {
@@ -26,6 +34,10 @@ cd sample-repository
 
 # Initialize the repository
 git init
+
+# Ensure that the hooks are enabled
+git config core.hooksPath .git/hooks
+git config --list
 
 # Create a file
 touch test.txt
